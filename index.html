@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factibilidad de Cultivo de Hortalizas - El Salvador</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- OpenLayers CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.4.0/ol.css">
+    
+    <!-- Cesium CSS -->
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Favicon SVG de hoja -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%2327ae60' d='M32 4C18 16 4 32 16 48c8 12 28 12 36 0C60 32 46 16 32 4zm0 8c10 10 22 22 14 36-6 10-22 10-28 0C10 34 22 22 32 12z'/%3E%3C/svg%3E">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 sidebar">
+                <h2 class="mb-4">
+                    <i class="fas fa-leaf"></i>
+                    Hortalizas GIS  
+                </h2>
+
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar capa..." id="layerSearch">
+                    <i class="fas fa-search"></i>
+                </div>
+
+                <!-- Suelos -->
+                <div class="layer-group">
+                    <h4 class="layer-group-title">
+                        <i class="fas fa-mountain"></i>
+                        Suelos
+                    </h4>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="fosforo">
+                        <label class="form-check-label" for="fosforo">
+                            <i class="fas fa-flask"></i> Fósforo
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="potasio">
+                        <label class="form-check-label" for="potasio">
+                            <i class="fas fa-flask"></i> Potasio
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ph">
+                        <label class="form-check-label" for="ph">
+                            <i class="fas fa-flask"></i> pH del suelo
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="tipo_suelo">
+                        <label class="form-check-label" for="tipo_suelo">
+                            <i class="fas fa-layer-group"></i> Tipo de suelo
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Clima -->
+                <div class="layer-group">
+                    <h4 class="layer-group-title">
+                        <i class="fas fa-cloud-sun"></i>
+                        Clima
+                    </h4>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="precipitacion">
+                        <label class="form-check-label" for="precipitacion">
+                            <i class="fas fa-cloud-rain"></i> Precipitación
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="temperatura">
+                        <label class="form-check-label" for="temperatura">
+                            <i class="fas fa-temperature-high"></i> Temperatura media
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Topografía -->
+                <div class="layer-group">
+                    <h4 class="layer-group-title">
+                        <i class="fas fa-mountain"></i>
+                        Topografía
+                    </h4>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="elevacion">
+                        <label class="form-check-label" for="elevacion">
+                            <i class="fas fa-mountain"></i> Elevación
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="erosion">
+                        <label class="form-check-label" for="erosion">
+                            <i class="fas fa-water"></i> Erosión
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rios">
+                        <label class="form-check-label" for="rios">
+                            <i class="fas fa-water"></i> Ríos principales
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Infraestructura -->
+                <div class="layer-group">
+                    <h4 class="layer-group-title">
+                        <i class="fas fa-road"></i>
+                        Infraestructura
+                    </h4>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="red_vial">
+                        <label class="form-check-label" for="red_vial">
+                            <i class="fas fa-road"></i> Red vial
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="areas_urbanas">
+                        <label class="form-check-label" for="areas_urbanas">
+                            <i class="fas fa-city"></i> Áreas urbanas
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Conservación -->
+                <div class="layer-group">
+                    <h4 class="layer-group-title">
+                        <i class="fas fa-tree"></i>
+                        Conservación
+                    </h4>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="areas_conservacion">
+                        <label class="form-check-label" for="areas_conservacion">
+                            <i class="fas fa-leaf"></i> Áreas de conservación
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sitios_contaminados">
+                        <label class="form-check-label" for="sitios_contaminados">
+                            <i class="fas fa-skull-crossbones"></i> Sitios contaminados
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Administrativo -->
+                <div class="layer-group">
+                    <h4 class="layer-group-title">
+                        <i class="fas fa-map-marked-alt"></i>
+                        Administrativo
+                    </h4>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="departamentos">
+                        <label class="form-check-label" for="departamentos">
+                            <i class="fas fa-map"></i> Departamentos
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="distritos">
+                        <label class="form-check-label" for="distritos">
+                            <i class="fas fa-map-pin"></i> Distritos
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Map Container -->
+            <div class="col-md-9 p-0">
+                <div id="map">
+                    <div class="map-controls">
+                        <button class="control-button" id="toggle3D">
+                            <i class="fas fa-cube"></i> 3D
+                        </button>
+                        <button class="control-button" id="toggleLayers">
+                            <i class="fas fa-layers"></i> Capas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.4.0/dist/ol.js"></script>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Cesium.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+</html>
