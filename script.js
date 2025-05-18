@@ -92,6 +92,87 @@ Object.entries(layers).forEach(([id, layer]) => {
     olLayers[id] = olLayer;
 });
 
+// Inicialización de los controles de comparación
+const compareButton = document.getElementById('compareLayers');
+const comparisonControls = document.getElementById('comparisonControls');
+const closeButton = document.getElementById('closeComparison');
+const layer1Select = document.getElementById('layer1Select');
+const layer2Select = document.getElementById('layer2Select');
+const layer1Opacity = document.getElementById('layer1Opacity');
+const layer2Opacity = document.getElementById('layer2Opacity');
+
+// Llenar los selectores con las capas disponibles
+Object.entries(layers).forEach(([id, layer]) => {
+    const option1 = new Option(layer.name, id);
+    const option2 = new Option(layer.name, id);
+    layer1Select.add(option1);
+    layer2Select.add(option2);
+});
+
+// Mostrar/ocultar controles de comparación
+compareButton.addEventListener('click', () => {
+    // Guardar el estado actual de las capas antes de entrar en modo comparación
+    const layerStates = {};
+    Object.entries(olLayers).forEach(([id, layer]) => {
+        layerStates[id] = {
+            visible: layer.getVisible(),
+            opacity: layer.getOpacity()
+        };
+    });
+    // Guardar el estado en el botón para usarlo al cerrar
+    compareButton.dataset.layerStates = JSON.stringify(layerStates);
+    
+    comparisonControls.style.display = 'block';
+});
+
+closeButton.addEventListener('click', () => {
+    comparisonControls.style.display = 'none';
+    
+    // Restaurar el estado original de las capas
+    const layerStates = JSON.parse(compareButton.dataset.layerStates || '{}');
+    Object.entries(olLayers).forEach(([id, layer]) => {
+        const state = layerStates[id] || { visible: false, opacity: 1 };
+        layer.setVisible(state.visible);
+        layer.setOpacity(state.opacity);
+    });
+    
+    // Limpiar los selectores
+    layer1Select.value = '';
+    layer2Select.value = '';
+    layer1Opacity.value = 50;
+    layer2Opacity.value = 50;
+});
+
+// Manejar cambios en la selección de capas
+function updateLayerComparison() {
+    const layer1Id = layer1Select.value;
+    const layer2Id = layer2Select.value;
+
+    // Ocultar todas las capas primero
+    Object.values(olLayers).forEach(layer => {
+        layer.setVisible(false);
+    });
+
+    // Mostrar y ajustar opacidad de las capas seleccionadas
+    if (layer1Id) {
+        const layer1 = olLayers[layer1Id];
+        layer1.setVisible(true);
+        layer1.setOpacity(layer1Opacity.value / 100);
+    }
+
+    if (layer2Id) {
+        const layer2 = olLayers[layer2Id];
+        layer2.setVisible(true);
+        layer2.setOpacity(layer2Opacity.value / 100);
+    }
+}
+
+// Agregar event listeners para los controles
+layer1Select.addEventListener('change', updateLayerComparison);
+layer2Select.addEventListener('change', updateLayerComparison);
+layer1Opacity.addEventListener('input', updateLayerComparison);
+layer2Opacity.addEventListener('input', updateLayerComparison);
+
 // Función para reordenar las capas activas
 function reorderActiveLayers() {
     const activeLayers = map.getLayers().getArray()
@@ -274,4 +355,69 @@ document.addEventListener('DOMContentLoaded', function() {
             element.style.transform = 'translateY(0)';
         }, index * 100);
     });
-}); 
+
+    // Inicializar controles de comparación
+    initializeComparisonControls();
+});
+
+// Funciones para la comparación de capas
+function initializeComparisonControls() {
+    const compareButton = document.getElementById('compareLayers');
+    const comparisonControls = document.getElementById('comparisonControls');
+    const closeButton = document.getElementById('closeComparison');
+    const layer1Select = document.getElementById('layer1Select');
+    const layer2Select = document.getElementById('layer2Select');
+    const layer1Opacity = document.getElementById('layer1Opacity');
+    const layer2Opacity = document.getElementById('layer2Opacity');
+
+    // Llenar los selectores con las capas disponibles
+    Object.entries(layers).forEach(([id, layer]) => {
+        const option1 = new Option(layer.name, id);
+        const option2 = new Option(layer.name, id);
+        layer1Select.add(option1);
+        layer2Select.add(option2);
+    });
+
+    // Mostrar/ocultar controles de comparación
+    compareButton.addEventListener('click', () => {
+        comparisonControls.style.display = 'block';
+    });
+
+    closeButton.addEventListener('click', () => {
+        comparisonControls.style.display = 'none';
+        // Restaurar opacidad original de las capas
+        Object.values(olLayers).forEach(layer => {
+            layer.setOpacity(1);
+        });
+    });
+
+    // Manejar cambios en la selección de capas
+    function updateLayerComparison() {
+        const layer1Id = layer1Select.value;
+        const layer2Id = layer2Select.value;
+
+        // Ocultar todas las capas primero
+        Object.values(olLayers).forEach(layer => {
+            layer.setVisible(false);
+        });
+
+        // Mostrar y ajustar opacidad de las capas seleccionadas
+        if (layer1Id) {
+            const layer1 = olLayers[layer1Id];
+            layer1.setVisible(true);
+            layer1.setOpacity(layer1Opacity.value / 100);
+        }
+
+        if (layer2Id) {
+            const layer2 = olLayers[layer2Id];
+            layer2.setVisible(true);
+            layer2.setOpacity(layer2Opacity.value / 100);
+        }
+    }
+
+    // Agregar event listeners para los controles
+    layer1Select.addEventListener('change', updateLayerComparison);
+    layer2Select.addEventListener('change', updateLayerComparison);
+    layer1Opacity.addEventListener('input', updateLayerComparison);
+    layer2Opacity.addEventListener('input', updateLayerComparison);
+} 

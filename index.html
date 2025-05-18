@@ -184,8 +184,23 @@
                         <button class="control-button" id="toggle3D">
                             <i class="fas fa-cube"></i> 3D
                         </button>
-                        <button class="control-button" id="toggleLayers">
-                            <i class="fas fa-layers"></i> Capas
+                        <button class="control-button" id="compareLayers">
+                            <i class="fas fa-balance-scale"></i> Comparar
+                        </button>
+                    </div>
+                    <div id="comparisonControls" class="comparison-controls" style="display: none;">
+                        <div class="comparison-layer">
+                            <label>Capa 1:</label>
+                            <select id="layer1Select" class="form-select"></select>
+                            <input type="range" id="layer1Opacity" min="0" max="100" value="50" class="opacity-slider">
+                        </div>
+                        <div class="comparison-layer">
+                            <label>Capa 2:</label>
+                            <select id="layer2Select" class="form-select"></select>
+                            <input type="range" id="layer2Opacity" min="0" max="100" value="50" class="opacity-slider">
+                        </div>
+                        <button class="control-button" id="closeComparison">
+                            <i class="fas fa-times"></i> Cerrar
                         </button>
                     </div>
                 </div>
