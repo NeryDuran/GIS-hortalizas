@@ -62,7 +62,7 @@ const map = new ol.Map({
         })
     ],
     view: new ol.View({
-        center: ol.proj.fromLonLat([-88.914068, 13.794185]),
+        center: ol.proj.fromLonLat([-89.2182, 13.6929]),
         zoom: 8
     })
 });
@@ -71,7 +71,7 @@ const map = new ol.Map({
 function createWMSLayer(layerName, geometryType) {
     return new ol.layer.Tile({
         source: new ol.source.TileWMS({
-            url: `${geoserverUrl}/${workspace}/wms`,
+            url: `${geoserverUrl}/wms`,
             params: {
                 'LAYERS': `${workspace}:${layerName}`,
                 'TILED': true
@@ -233,26 +233,82 @@ function createLegendContainer(layerName, layerTitle) {
     return container;
 }
 
-// Control de capas mejorado
+// Inicialización de Cesium
+const cesiumContainer = document.createElement('div');
+cesiumContainer.id = 'cesiumContainer';
+cesiumContainer.style.display = 'none';
+cesiumContainer.style.width = '100%';
+cesiumContainer.style.height = '100%';
+document.getElementById('map').appendChild(cesiumContainer);
+
+// Crear instancia del CesiumManager
+const cesiumManager = new CesiumManager('cesiumContainer', geoserverUrl, workspace);
+
+// Control 3D mejorado
+document.getElementById('toggle3D').addEventListener('click', async function() {
+    console.log('Botón 3D clickeado');
+    const mapDiv = document.getElementById('map');
+    const cesiumDiv = document.getElementById('cesiumContainer');
+    
+    if (cesiumDiv.style.display === 'none') {
+        console.log('Cambiando a vista 3D...');
+        // Inicializar Cesium si no está inicializado
+        if (!cesiumManager.isInitialized) {
+            console.log('Inicializando Cesium...');
+            const initialized = await cesiumManager.initialize();
+            if (!initialized) {
+                console.error('Error al inicializar Cesium');
+                return;
+            }
+            console.log('Cesium inicializado exitosamente');
+        }
+
+        // Ocultar OpenLayers y mostrar Cesium
+        mapDiv.querySelector('.ol-viewport').style.display = 'none';
+        cesiumDiv.style.display = 'block';
+        
+        // Sincronizar capas visibles con Cesium
+        Object.entries(olLayers).forEach(([id, layer]) => {
+            if (layer.getVisible()) {
+                console.log('Agregando capa visible:', id);
+                cesiumManager.addLayer(id, layers[id].name, layers[id].geometry);
+            }
+        });
+    } else {
+        console.log('Cambiando a vista 2D...');
+        // Mostrar OpenLayers y ocultar Cesium
+        mapDiv.querySelector('.ol-viewport').style.display = 'block';
+        cesiumDiv.style.display = 'none';
+    }
+});
+
+// Modificar el evento de cambio de capas para incluir Cesium
 document.querySelectorAll('.form-check-input').forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
+    checkbox.addEventListener('change', async function() {
         const layerId = this.id;
         const layer = olLayers[layerId];
         
         if (layer) {
             layer.setVisible(this.checked);
+            
+            // Sincronizar con Cesium si está activo
+            if (document.getElementById('cesiumContainer').style.display !== 'none') {
+                if (this.checked) {
+                    await cesiumManager.addLayer(layerId, layers[layerId].name, layers[layerId].geometry);
+                } else {
+                    cesiumManager.removeLayer(layerId);
+                }
+            }
+            
             reorderActiveLayers();
             
-            // Obtener el contenedor del checkbox
+            // Manejar la leyenda
             const checkboxContainer = this.closest('.form-check');
-            
             if (this.checked) {
-                // Crear y agregar la leyenda
                 const layerTitle = this.nextElementSibling.textContent.trim();
                 const legendContainer = createLegendContainer(layers[layerId].name, layerTitle);
                 checkboxContainer.appendChild(legendContainer);
                 
-                // Agregar evento para contraer/expandir
                 const toggleButton = legendContainer.querySelector('.toggle-legend');
                 const legendContent = legendContainer.querySelector('.legend-content');
                 
@@ -263,7 +319,6 @@ document.querySelectorAll('.form-check-input').forEach(checkbox => {
                         'fas fa-chevron-right' : 'fas fa-chevron-down';
                 });
             } else {
-                // Remover la leyenda cuando se desactiva la capa
                 const legendToRemove = checkboxContainer.querySelector('.layer-legend');
                 if (legendToRemove) {
                     legendToRemove.remove();
@@ -292,58 +347,6 @@ document.getElementById('layerSearch').addEventListener('input', function(e) {
         // Mostrar/ocultar el grupo completo
         group.style.display = hasVisibleChecks ? 'block' : 'none';
     });
-});
-
-// Inicialización de Cesium
-const cesiumContainer = document.createElement('div');
-cesiumContainer.id = 'cesiumContainer';
-cesiumContainer.style.display = 'none';
-cesiumContainer.style.width = '100%';
-cesiumContainer.style.height = '100%';
-document.getElementById('map').appendChild(cesiumContainer);
-
-// Asegurarse de que el token de Cesium esté configurado
-Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlYWE1OWUxNy1mMWZiLTQzYjYtYTQ0OS1kMWFjYmFkNjc5YzciLCJpZCI6NTc3MzMsImlhdCI6MTYyMjY0NjQ5OH0.XcKpgANiY19MC4bdFUXMVEBToBmqS8kuYpUlxJHYZvY';
-
-const viewer = new Cesium.Viewer('cesiumContainer', {
-    terrainProvider: Cesium.createWorldTerrain(),
-    animation: false,
-    baseLayerPicker: false,
-    fullscreenButton: false,
-    geocoder: false,
-    homeButton: false,
-    infoBox: false,
-    sceneModePicker: false,
-    selectionIndicator: false,
-    timeline: false,
-    navigationHelpButton: false
-});
-
-// Centrar la vista en El Salvador
-viewer.camera.flyTo({
-    destination: Cesium.Cartesian3.fromDegrees(-88.914068, 13.794185, 100000),
-    orientation: {
-        heading: 0.0,
-        pitch: -Cesium.Math.PI_OVER_TWO,
-        roll: 0.0
-    }
-});
-
-// Control 3D mejorado
-document.getElementById('toggle3D').addEventListener('click', function() {
-    const mapDiv = document.getElementById('map');
-    const cesiumDiv = document.getElementById('cesiumContainer');
-    
-    if (cesiumDiv.style.display === 'none') {
-        mapDiv.style.display = 'none';
-        cesiumDiv.style.display = 'block';
-        viewer.scene.globe.enableLighting = true;
-        // Forzar actualización de la vista
-        viewer.scene.requestRender();
-    } else {
-        mapDiv.style.display = 'block';
-        cesiumDiv.style.display = 'none';
-    }
 });
 
 // Animación de entrada para los elementos
@@ -420,4 +423,12 @@ function initializeComparisonControls() {
     layer2Select.addEventListener('change', updateLayerComparison);
     layer1Opacity.addEventListener('input', updateLayerComparison);
     layer2Opacity.addEventListener('input', updateLayerComparison);
-} 
+}
+
+document.getElementById('toggleControls').addEventListener('click', function() {
+    const menu = document.querySelector('.fab-menu');
+    const mainButton = this;
+    
+    menu.classList.toggle('active');
+    mainButton.classList.toggle('active');
+}); 

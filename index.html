@@ -181,12 +181,19 @@
             <div class="col-md-9 p-0">
                 <div id="map">
                     <div class="map-controls">
-                        <button class="control-button" id="toggle3D">
-                            <i class="fas fa-cube"></i> 3D
+                        <button class="fab-button main" id="toggleControls">
+                            <i class="fas fa-ellipsis-v"></i>
                         </button>
-                        <button class="control-button" id="compareLayers">
-                            <i class="fas fa-balance-scale"></i> Comparar
-                        </button>
+                        <div class="fab-menu">
+                            <button class="fab-button secondary" id="toggle3D">
+                                <i class="fas fa-cube"></i>
+                                <span class="fab-label">Vista 3D</span>
+                            </button>
+                            <button class="fab-button secondary" id="compareLayers">
+                                <i class="fas fa-balance-scale"></i>
+                                <span class="fab-label">Comparar</span>
+                            </button>
+                        </div>
                     </div>
                     <div id="comparisonControls" class="comparison-controls" style="display: none;">
                         <div class="comparison-layer">
@@ -203,6 +210,8 @@
                             <i class="fas fa-times"></i> Cerrar
                         </button>
                     </div>
+                    <!-- Contenedor de Cesium -->
+                    <div id="cesiumContainer"></div>
                 </div>
             </div>
         </div>
@@ -215,6 +224,7 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <!-- Custom JS -->
+    <script src="cesiumManager.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
