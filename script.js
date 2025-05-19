@@ -6,8 +6,8 @@ const workspace = 'hortalizas';
 const layers = {
     fosforo: { name: 'fosforo', type: 'vector', geometry: 'polygon' },
     potasio: { name: 'potasio', type: 'vector', geometry: 'polygon' },
-    ph: { name: 'ph suelo', type: 'vector', geometry: 'polygon' },
-    tipo_suelo: { name: 'tipo suelo', type: 'vector', geometry: 'polygon' },
+    ph: { name: 'ph del suelo', type: 'vector', geometry: 'polygon' },
+    tipo_suelo: { name: 'tipo de suelo', type: 'vector', geometry: 'polygon' },
     precipitacion: { name: 'precipitacion', type: 'vector', geometry: 'polygon' },
     temperatura: {
         name: 'temperatura_media',
@@ -26,7 +26,7 @@ const layers = {
     },
     elevacion: { name: 'elevacion', type: 'vector', geometry: 'polygon' },
     erosion: {
-        name: 'erosion',
+        name: 'erosión',
         type: 'raster',
         geometry: 'raster',
         customLegend: [
@@ -41,7 +41,7 @@ const layers = {
     areas_urbanas: { name: 'areas urbanas', type: 'vector', geometry: 'polygon' },
     departamentos: { name: 'departamentos', type: 'vector', geometry: 'polygon' },
     distritos: { name: 'distritos', type: 'vector', geometry: 'polygon' },
-    areas_conservacion: { name: 'areas conservacion', type: 'vector', geometry: 'polygon' },
+    areas_conservacion: { name: 'areas de conservacion', type: 'vector', geometry: 'polygon' },
     sitios_contaminados: { name: 'sitios contaminados', type: 'vector', geometry: 'point' }
 };
 
