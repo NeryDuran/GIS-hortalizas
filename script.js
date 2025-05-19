@@ -1,5 +1,5 @@
 // Configuración de GeoServer
-const geoserverUrl = 'http://3.142.197.190:8080/geoserver';
+const geoserverUrl = 'https://hortalizas.shop/geoserver/';
 const workspace = 'hortalizas';
 
 // Definición de capas con sus tipos geométricos
