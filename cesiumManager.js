@@ -176,17 +176,8 @@ class CesiumManager {
             return null;
         }
 
-        // Determinar el estilo basado en el tipo de geometría
-        let style = '';
-        if (geometryType === 'polygon') {
-            style = 'polygon';
-        } else if (geometryType === 'line') {
-            style = 'line';
-        } else if (geometryType === 'point') {
-            style = 'point';
-        } else if (geometryType === 'raster') {
-            style = 'raster';
-        }
+
+        const style = `${layerName}`;
 
         console.log('Configurando proveedor de imágenes WMS...');
         const imageryProvider = new Cesium.WebMapServiceImageryProvider({
