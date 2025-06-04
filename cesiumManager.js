@@ -81,7 +81,7 @@ class CesiumManager {
         const zoomContainer = document.createElement('div');
         zoomContainer.className = 'cesium-zoom-controls';
         zoomContainer.style.position = 'absolute';
-        zoomContainer.style.right = '20px';
+        zoomContainer.style.left = '20px';
         zoomContainer.style.top = '50%';
         zoomContainer.style.transform = 'translateY(-50%)';
         zoomContainer.style.zIndex = '1001';
