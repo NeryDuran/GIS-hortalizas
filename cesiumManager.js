@@ -177,7 +177,7 @@ class CesiumManager {
         }
 
 
-        const style = `${layerName}`;
+        const style = `${this.workspace}:${layerName}`;
 
         console.log('Configurando proveedor de imágenes WMS...');
         const imageryProvider = new Cesium.WebMapServiceImageryProvider({
